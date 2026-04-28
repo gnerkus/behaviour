@@ -1,0 +1,19 @@
+{
+  "name": "behaviour",
+  "version": "1.0.0",
+  "description": "exploration of mistreevous",
+  "keywords": [
+    "behaviour",
+    "tree"
+  ],
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "mistreevous": "^4.3.1"
+  }
+}
