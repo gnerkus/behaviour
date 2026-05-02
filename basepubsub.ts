@@ -1,5 +1,21 @@
-type ActorAction = (data?: any) => void;
-const stack: ActorAction[] = [];
+import {Heap} from "heap-js";
+
+type Listener<E> = <Key extends string & keyof E>(message: E[Key]) => void;
+type Handler<E> = <Key extends string & keyof E>(message: E[Key]) => void;
+
+type BattleEvents = {
+  EnemyAttack: { targetId: string, damage: number },
+  Guard: {targetId: string},
+  Heal: {targetId: string}
+}
+type Effect = {
+  callback: Handler<BattleEvents>
+  args: BattleEvents
+  priority: number
+}
+
+const customPriorityComparator = (a: Effect, b: Effect) => a.priority - b.priority;
+const actionPriorityQueue = new Heap(customPriorityComparator);
 
 abstract class Actor {
 }
@@ -30,16 +46,19 @@ class Knight extends Actor {
     broker.addSubscriber('enemyAttack', this.onEnemyAttack)
   }
 
-  onEnemyAttack:ActorAction = (data: any) => {
-    console.log(`Enemy attacked hero ${data.targetId} for ${data.damage}`)
+  onEnemyAttack: Listener<BattleEvents> = (data: any) => {
+    console.log(`Knight: Enemy will attack hero ${data.targetId} for ${data.damage}`)
     console.log("run knight behaviour tree to determine what to do")
     // behaviour decides 'guard' is the right action
-    stack.push(this.guard);
-    return;
+    actionPriorityQueue.push({
+      callback: this.guard,
+      args: data,
+      priority: 1
+    })
   }
 
-  guard = () => {
-    console.log("guarding")
+  guard: Handler<BattleEvents> = (message) => {
+    console.log(`Knight will guard target ${message.targetId}`)
   }
 }
 
@@ -49,21 +68,26 @@ class Healer extends Actor {
     broker.addSubscriber('enemyAttack', this.onEnemyAttack)
   }
 
-  onEnemyAttack: ActorAction = (data: any) => {
-    console.log(`Enemy attacked hero ${data.targetId} for ${data.damage}`)
+  onEnemyAttack: Listener<BattleEvents> = (data: any) => {
+    console.log(`Healer: Enemy will attack hero ${data.targetId} for ${data.damage}`)
     console.log("run healer behaviour tree to determine what to do")
     // behaviour decides 'heal' is the right action
-    stack.push(this.heal)
-    return;
+    actionPriorityQueue.push({
+      callback: this.heal,
+      args: data,
+      priority: 2
+    })
   }
 
-  heal = () => {
-    console.log("healing")
+  heal: Handler<BattleEvents> = (message) => {
+    if ("damage" in message) {
+      console.log(`Healer will heal target ${message.targetId} for more than ${message.damage}`)
+    }
   }
 }
 
 class Fighter {
-  enemyAttack: ActorAction = () => {
+  enemyAttack: Listener<BattleEvents> = () => {
     broker.publish('enemyAttack', { targetId: "1234", damage: 50})
     return;
   }
@@ -73,9 +97,21 @@ const knight = new Knight();
 const healer = new Healer();
 const fighter = new Fighter();
 
-fighter.enemyAttack();
+fighter.enemyAttack({ targetId: "1234", damage: 50});
 
-let next = stack.pop();
-next();
-next = stack.pop();
-next();
+let next = actionPriorityQueue.pop();
+next.callback(next.args);
+next = actionPriorityQueue.pop();
+next.callback(next.args);
+
+/**
+ * actions:
+ * - publish to broker
+ * - stored in stack
+ * - represented in behaviour tree
+ *
+ * handlers:
+ * - call behaviour tree
+ * - subscribe
+ * - store result of behaviour tree in stack
+ */
