@@ -53,7 +53,7 @@ type PubSubType<E> = {
  * const pubSub = PubSub<Events>()
  * pubSub.publish('warn', { message: "Something bad happened!" })
  */
-export function PubSub<E>(): PubSubType<E> {
+function PubSub<E>(): PubSubType<E> {
 
   const handlers: { [key: string]: (MessageFn<E>)[] } = {}
 
@@ -74,4 +74,8 @@ export function PubSub<E>(): PubSubType<E> {
       handlers[event] = list
     }
   }
+}
+
+export {
+  PubSub
 }

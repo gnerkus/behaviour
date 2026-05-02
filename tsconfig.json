@@ -1,6 +1,9 @@
 {
-  "compilerOptions": {
-    "target": "ES2015",
-    // other options
-  }
+  "noEmit": true, // Optional - see note below
+  "target": "esnext",
+  "module": "nodenext",
+  "rewriteRelativeImportExtensions": true,
+  "erasableSyntaxOnly": true,
+  "verbatimModuleSyntax": true,
+  "allowImportingTsExtensions": true
 }

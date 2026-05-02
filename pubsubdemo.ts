@@ -2,18 +2,44 @@
 // Posted by Cory Robinson, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-05-02, License - CC BY-SA 4.0
 
-import { PubSub } from './pubsub'
+import { PubSub } from './pubsub.ts'
 
-
-type events = {
-  CreatedPerson: { id: string, name: string }
-  DeletedPerson: { personId: string; reason: string }
+type KnightEvents = {
+  EnemyAttack: { targetId: string, damage: number }
+  Guard: { targetId: string }
 }
 
-const pubSub = PubSub<events>()
+type FighterEvents = {
+  EnemyAttack: { targetId: string, damage: number }
+}
 
-pubSub.publish("CreatedPerson", { id: '1', name: 'cory' })
+type HealerEvents = {
+  EnemyAttack: { targetId: string, damage: number }
+  Heal: { targetId: string, damage: number }
+}
 
-pubSub.subscribe("CreatedPerson", (message) => {
-  console.log(message)
-})
+const enemyFighter = PubSub<FighterEvents>();
+const heroKnight = PubSub<KnightEvents>();
+const heroHealer = PubSub<HealerEvents>();
+
+heroHealer.subscribe("EnemyAttack", (message) => {
+  console.log(`Teammate is being attacked for ${message.damage} damage`)
+  console.log("Heal");
+  heroHealer.publish("Heal", {
+    targetId: message.targetId,
+    damage: 50
+  });
+});
+
+heroKnight.subscribe("EnemyAttack", (message) => {
+  if ("damage" in message) {
+    console.log(`Teammate is being attacked for ${message.damage} damage`)
+    console.log("Guard");
+    heroKnight.publish("Guard", {
+      targetId: message.targetId,
+    });
+  }
+});
+
+enemyFighter.publish("EnemyAttack", { targetId: "1234", damage: 50});
+
