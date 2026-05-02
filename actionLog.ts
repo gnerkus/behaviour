@@ -36,6 +36,7 @@ test2();
  *   action [Guard]
  * }
  *
+ * We call behaviour.step() each time the subscriber has to act
  */
 
 
