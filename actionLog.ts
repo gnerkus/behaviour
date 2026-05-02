@@ -26,4 +26,16 @@ test();
 const test2 = stack.pop();
 test2();
 
+/**
+ *
+ * If enemy HP >= 60% and self HP <= 50%, use guard
+ *
+ * sequence {
+ *   condition [TargetHPMore60]
+ *   condition [SelfHPLess50]
+ *   action [Guard]
+ * }
+ *
+ */
+
 
