@@ -3,6 +3,8 @@ import {Heap} from "heap-js";
 type Listener<E> = <Key extends string & keyof E>(message: E[Key]) => void;
 type Handler<E> = <Key extends string & keyof E>(message: E[Key]) => void;
 
+type BattleEventTypes = "EnemyAttack" | "Guard" | "Heal"
+
 type BattleEvents = {
   EnemyAttack: { targetId: string, damage: number },
   Guard: {targetId: string},
@@ -10,7 +12,7 @@ type BattleEvents = {
 }
 type Effect = {
   callback: Handler<BattleEvents>
-  args: BattleEvents
+  args: BattleEvents[BattleEventTypes]
   priority: number
 }
 
@@ -87,7 +89,7 @@ class KnightActor {
     broker.addSubscriber('enemyAttack', this.onEnemyAttack)
   }
 
-  onEnemyAttack = async (data: any) => {
+  onEnemyAttack: Listener<BattleEvents> = async (data: BattleEvents["EnemyAttack"]) => {
     console.log(`Knight: Enemy will attack hero ${data.targetId} for ${data.damage}`)
     console.log("running knight behaviour tree to determine what to do")
     // fake timeout to simulate thinking
@@ -103,7 +105,7 @@ class KnightActor {
     return;
   }
 
-  guard = (message) => {
+  guard: Handler<BattleEvents> = (message: BattleEvents["Guard"]) => {
     console.log(`Knight guards ${message.targetId}`)
   }
 }
@@ -113,7 +115,7 @@ class HealerActor {
     broker.addSubscriber('enemyAttack', this.onEnemyAttack)
   }
 
-  onEnemyAttack = async (data: any) => {
+  onEnemyAttack: Listener<BattleEvents> = async (data: BattleEvents["EnemyAttack"]) => {
     console.log(`Healer: Enemy will attack hero ${data.targetId} for ${data.damage}`)
     console.log("running healer behaviour tree to determine what to do")
     // fake timeout to simulate thinking
@@ -129,7 +131,7 @@ class HealerActor {
     return;
   }
 
-  heal = (message) => {
+  heal: Handler<BattleEvents> = (message: BattleEvents["Heal"]) => {
     console.log(`Healer heals ${message.targetId}`);
   }
 }
