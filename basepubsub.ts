@@ -59,6 +59,7 @@ class Knight extends Actor {
 
   guard: Handler<BattleEvents> = (message) => {
     console.log(`Knight will guard target ${message.targetId}`)
+    // can publish here
   }
 }
 
@@ -83,6 +84,7 @@ class Healer extends Actor {
     if ("damage" in message) {
       console.log(`Healer will heal target ${message.targetId} for more than ${message.damage}`)
     }
+    // can publish here for enemies that can block the heal
   }
 }
 
@@ -105,13 +107,13 @@ next = actionPriorityQueue.pop();
 next.callback(next.args);
 
 /**
- * actions:
+ * handler:
  * - publish to broker
  * - stored in stack
  * - represented in behaviour tree
  *
- * handlers:
+ * listener:
  * - call behaviour tree
- * - subscribe
+ * - is added to broker as a subscription
  * - store result of behaviour tree in stack
  */
