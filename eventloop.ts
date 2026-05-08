@@ -1,3 +1,22 @@
+import {Heap} from "heap-js";
+
+type Listener<E> = <Key extends string & keyof E>(message: E[Key]) => void;
+type Handler<E> = <Key extends string & keyof E>(message: E[Key]) => void;
+
+type BattleEvents = {
+  EnemyAttack: { targetId: string, damage: number },
+  Guard: {targetId: string},
+  Heal: {targetId: string}
+}
+type Effect = {
+  callback: Handler<BattleEvents>
+  args: BattleEvents
+  priority: number
+}
+
+const customPriorityComparator = (a: Effect, b: Effect) => a.priority - b.priority;
+const actionPriorityQueue = new Heap(customPriorityComparator);
+
 /**
  * A. Actor listeners are async; they return a promise once completed
  * B.
@@ -15,7 +34,7 @@
 class Broker {
   private events: Record<string, Function[]> = {};
   private eventQueue: {event: string; data: any;}[] = [];
-  private state: "dispatching" | "idle" = "idle";
+  private state: "dispatching" | "idle" | "action" = "idle";
 
   constructor() {
     // this.eventLoop();
@@ -33,18 +52,8 @@ class Broker {
     this.processEventQueue();
   }
 
-  // async eventLoop() {
-  //   while (true) {
-  //     if (this.eventQueue.length > 0) {
-  //       if (this.state !== "dispatching") {
-  //         await this.processEventQueue();
-  //       }
-  //     }
-  //   }
-  // }
-
   async processEventQueue() {
-    if (this.state === "dispatching") {
+    if (this.state !== "idle") {
       return;
     }
 
@@ -53,8 +62,8 @@ class Broker {
 
     if (this.eventQueue.length <= 0) {
       this.state = "idle";
-      console.log("No more events");
-      // TODO: process function queue now
+      console.log("No more events; processing actions");
+      this.processActions();
       return;
     }
 
@@ -75,6 +84,12 @@ class Broker {
     console.log('state: idle');
     this.processEventQueue();
   }
+
+  processActions() {
+    for (const action of actionPriorityQueue) {
+      action.callback(action.args);
+    }
+  }
 }
 
 const broker = new Broker();
@@ -91,17 +106,21 @@ class KnightActor {
   onEnemyAttack = async (data: any) => {
     console.log(`Knight: Enemy will attack hero ${data.targetId} for ${data.damage}`)
     console.log("running knight behaviour tree to determine what to do")
-    // behaviour decides 'guard' is the right action
     // fake timeout to simulate thinking
     await timeout(1000);
-    this.guard(data);
+    // behaviour decides 'guard' is the right action
+    console.log(`Thinking done: Knight will guard target ${data.targetId}`)
+    broker.addToEventQueue('guard', { targetId: "1234" })
+    actionPriorityQueue.push({
+      callback: this.guard,
+      args: data,
+      priority: 1
+    });
     return;
   }
 
   guard = (message) => {
-    console.log(`Thinking done: Knight will guard target ${message.targetId}`)
-    // can publish here
-    broker.addToEventQueue('guard', { targetId: "1234" })
+    console.log(`Knight guards ${message.targetId}`)
   }
 }
 
@@ -113,17 +132,21 @@ class HealerActor {
   onEnemyAttack = async (data: any) => {
     console.log(`Healer: Enemy will attack hero ${data.targetId} for ${data.damage}`)
     console.log("running healer behaviour tree to determine what to do")
-    // behaviour decides 'guard' is the right action
     // fake timeout to simulate thinking
     await timeout(1000);
-    this.heal(data);
+    // behaviour decides 'guard' is the right action
+    console.log(`Thinking done: Healer will heal target ${data.targetId}`)
+    broker.addToEventQueue('heal', { targetId: "1234" })
+    actionPriorityQueue.push({
+      callback: this.heal,
+      args: data,
+      priority: 2
+    })
     return;
   }
 
   heal = (message) => {
-    console.log(`Thinking done: Healer will heal target ${message.targetId}`)
-    // can publish here
-    broker.addToEventQueue('heal', { targetId: "1234" })
+    console.log(`Healer heals ${message.targetId}`);
   }
 }
 
