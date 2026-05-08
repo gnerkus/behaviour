@@ -17,27 +17,12 @@ type Effect = {
 const customPriorityComparator = (a: Effect, b: Effect) => a.priority - b.priority;
 const actionPriorityQueue = new Heap(customPriorityComparator);
 
-/**
- * A. Actor listeners are async; they return a promise once completed
- * B.
- * 1. A loop runs in the broker after its creation
- *   1.1. It checks its event queue
- *   1.2 If there's an event, it calls all listeners using Promise.all
- *   1.3 Once the Promise.all is resolved, the loop continues (broker checks
- *   the queue)
- *   1.4 If queue is empty, loop exits
- *  2. After the loop is complete, the broker then works through the action
- *  stack
- */
-
-
 class Broker {
   private events: Record<string, Function[]> = {};
   private eventQueue: {event: string; data: any;}[] = [];
   private state: "dispatching" | "idle" | "action" = "idle";
 
   constructor() {
-    // this.eventLoop();
   }
 
   addSubscriber(event: string, callback: Function) {
@@ -67,7 +52,6 @@ class Broker {
       return;
     }
 
-    // TODO: events should be popped via priority
     const eventPair = this.eventQueue.pop();
     console.log(`Processing event ${eventPair.event}`);
 
