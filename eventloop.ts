@@ -1,11 +1,11 @@
 import {Heap} from "heap-js";
-import {
+import type {
   Effect
-} from "./types";
-import KnightActor from "./models/Knight";
-import HealerActor from "./models/Healer";
-import FighterActor from "./models/Fighter";
-import Broker from "./gameobjects/Broker";
+} from "./gametypes.ts";
+import KnightActor from "./models/Knight.ts";
+import HealerActor from "./models/Healer.ts";
+import FighterActor from "./models/Fighter.ts";
+import Broker from "./gameobjects/Broker.ts";
 
 const customPriorityComparator = (a: Effect, b: Effect) => a.priority - b.priority;
 const actionPriorityQueue = new Heap(customPriorityComparator);

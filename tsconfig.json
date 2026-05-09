@@ -7,6 +7,10 @@
   "verbatimModuleSyntax": true,
   "allowImportingTsExtensions": true,
   "compilerOptions": {
-    "downlevelIteration": true
-  }
+    "downlevelIteration": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": ["*.ts"],
+  "exclude": ["node_modules"]
 }

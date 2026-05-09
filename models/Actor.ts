@@ -1,9 +1,8 @@
-import {
-  BattleEvents,
-  BattleEventTypes,
+import type {
+  BattleEvents, BattleEventTypes,
   BrokerInterface,
   Effect
-} from "../types";
+} from "../gametypes.ts";
 import {BehaviourTree} from "mistreevous";
 import {Heap} from "heap-js";
 

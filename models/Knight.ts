@@ -1,17 +1,17 @@
-import {Actor} from "./Actor";
-import {
+import {Actor} from "./Actor.ts";
+import type {
   BattleEvents,
   BrokerInterface,
   Effect,
   Handler,
   Listener
-} from "../types";
+} from "../gametypes.ts";
 import {Heap} from "heap-js";
 
 class KnightActor extends Actor {
   constructor(definition: string, broker: BrokerInterface, queue: Heap<Effect>) {
     super(definition, broker, queue);
-    this.brokerRef.addSubscriber('enemyAttack', this.onEnemyAttack);
+    this.brokerRef.addSubscriber('EnemyAttack', this.onEnemyAttack);
   }
 
   onEnemyAttack: Listener<BattleEvents> = async (data: BattleEvents["EnemyAttack"]) => {

@@ -1,9 +1,9 @@
-import {
+import type {
   BattleEvents,
   BattleEventTypes,
   BrokerInterface,
   Effect
-} from "../types";
+} from "../gametypes.ts";
 import {Heap} from "heap-js";
 
 class Broker implements BrokerInterface {

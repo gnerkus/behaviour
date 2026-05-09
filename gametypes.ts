@@ -1,7 +1,7 @@
 export type Listener<E> = <Key extends string & keyof E>(message: E[Key]) => void;
 export type Handler<E> = <Key extends string & keyof E>(message: E[Key]) => void;
 
-export type BattleEventTypes = "EnemyAttack" | "Guard" | "Heal"
+export type BattleEventTypes = "EnemyAttack" | "Guard" | "Heal";
 
 export type BattleEvents = {
   EnemyAttack: { targetId: string, damage: number },

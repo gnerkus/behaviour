@@ -1,11 +1,11 @@
-import {
+import type {
   BattleEvents,
   BrokerInterface,
   Effect,
   Handler,
   Listener
-} from "../types";
-import {Actor} from "./Actor";
+} from "../gametypes.ts";
+import {Actor} from "./Actor.ts";
 import {Heap} from "heap-js";
 
 class HealerActor extends Actor {
