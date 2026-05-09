@@ -1,4 +1,4 @@
-- [ ] Extract Actor class
-  - [ ] Clean up duplication in Knight and Healer classes
-  - [ ] Move classes to external file
+- [x] Extract Actor class
+  - [x] Clean up duplication in Knight and Healer classes
+  - [x] Move classes to external file
 - [ ] 
