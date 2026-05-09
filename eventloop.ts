@@ -1,28 +1,25 @@
 import {Heap} from "heap-js";
-import {BehaviourTree} from "mistreevous";
+import {
+  BattleEventTypes,
+  Handler,
+  Listener,
+  BattleEvents,
+  Effect, BrokerInterface
+} from "./types";
+import {Actor} from "./models/Actor";
+import KnightActor from "./models/Knight";
+import HealerActor from "./models/Healer";
 
-type Listener<E> = <Key extends string & keyof E>(message: E[Key]) => void;
-type Handler<E> = <Key extends string & keyof E>(message: E[Key]) => void;
-
-type BattleEventTypes = "EnemyAttack" | "Guard" | "Heal"
-
-type BattleEvents = {
-  EnemyAttack: { targetId: string, damage: number },
-  Guard: { targetId: string },
-  Heal: { targetId: string }
-}
-type Effect = {
-  callback: Handler<BattleEvents>
-  args: BattleEvents[BattleEventTypes]
-  priority: number
-}
 
 const customPriorityComparator = (a: Effect, b: Effect) => a.priority - b.priority;
 const actionPriorityQueue = new Heap(customPriorityComparator);
 
-class Broker {
-  private events: Record<string, Function[]> = {};
-  private eventQueue: { event: string; data: any; }[] = [];
+class Broker implements BrokerInterface {
+  private events: Partial<Record<BattleEventTypes, Function[]>> = {};
+  private eventQueue: {
+    event: string;
+    data: BattleEvents[BattleEventTypes];
+  }[] = [];
   private state: "dispatching" | "idle" | "action" = "idle";
 
   constructor() {
@@ -35,7 +32,7 @@ class Broker {
     this.events[event].push(callback)
   }
 
-  addToEventQueue(event: string, data?: any) {
+  addToEventQueue(event: string, data: BattleEvents[BattleEventTypes]) {
     this.eventQueue.push({event, data});
     this.processEventQueue();
   }
@@ -81,81 +78,6 @@ class Broker {
 
 const broker = new Broker();
 
-class KnightActor {
-  private currentEventData: BattleEvents[BattleEventTypes];
-  private tree: BehaviourTree;
-
-  constructor() {
-    broker.addSubscriber('enemyAttack', this.onEnemyAttack);
-    const definition = `root {
-        sequence {
-            action [Guard]
-        }
-    }`;
-    this.tree = new BehaviourTree(definition, this);
-  }
-
-  onEnemyAttack: Listener<BattleEvents> = async (data: BattleEvents["EnemyAttack"]) => {
-    this.currentEventData = data;
-    console.log(`Knight: Enemy will attack hero ${data.targetId} for ${data.damage}`)
-    console.log("running knight behaviour tree to determine what to do")
-    this.tree.step();
-    return;
-  }
-
-  guardHandler: Handler<BattleEvents> = (message: BattleEvents["Guard"]) => {
-    console.log(`Knight guards ${message.targetId}`)
-  }
-
-  Guard = () => {
-    console.log(`Thinking done: Knight will guard target ${this.currentEventData.targetId}`)
-    broker.addToEventQueue('guard', {targetId: "1234"})
-    actionPriorityQueue.push({
-      callback: this.guardHandler,
-      args: this.currentEventData,
-      priority: 1
-    });
-    this.currentEventData = null;
-  }
-}
-
-class HealerActor {
-  private currentEventData: BattleEvents[BattleEventTypes];
-  private tree: BehaviourTree;
-
-  constructor() {
-    broker.addSubscriber('enemyAttack', this.onEnemyAttack);
-    const definition = `root {
-        sequence {
-            action [Heal]
-        }
-    }`;
-    this.tree = new BehaviourTree(definition, this);
-  }
-
-  onEnemyAttack: Listener<BattleEvents> = async (data: BattleEvents["EnemyAttack"]) => {
-    this.currentEventData = data;
-    console.log(`Healer: Enemy will attack hero ${data.targetId} for ${data.damage}`)
-    console.log("running healer behaviour tree to determine what to do")
-    this.tree.step();
-    return;
-  }
-
-  healHandler: Handler<BattleEvents> = (message: BattleEvents["Heal"]) => {
-    console.log(`Healer heals ${message.targetId}`);
-  }
-
-  Heal = () => {
-    console.log(`Thinking done: Healer will heal target ${this.currentEventData.targetId}`)
-    broker.addToEventQueue('heal', {targetId: "1234"})
-    actionPriorityQueue.push({
-      callback: this.healHandler,
-      args: this.currentEventData,
-      priority: 2
-    });
-    this.currentEventData = null;
-  }
-}
 
 class FighterActor {
   enemyAttack = () => {
@@ -163,8 +85,18 @@ class FighterActor {
   }
 }
 
-const knight = new KnightActor();
-const healer = new HealerActor();
+const knightRules = `root {
+        sequence {
+            action [Guard]
+        }
+    }`;
+const knight = new KnightActor(knightRules, broker, actionPriorityQueue);
+const healerRules = `root {
+        sequence {
+            action [Heal]
+        }
+    }`;
+const healer = new HealerActor(healerRules, broker, actionPriorityQueue);
 
 const fighter = new FighterActor();
 
