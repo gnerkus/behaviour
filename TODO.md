@@ -1,4 +1,37 @@
 - [x] Extract Actor class
   - [x] Clean up duplication in Knight and Healer classes
   - [x] Move classes to external file
-- [ ] 
+- [ ] Add stats to actors
+  - [ ] Knight: 175 hp, atk 25, mag 0
+  - [ ] Healer: 100 hp, atk 0, mag 100
+  - [ ] Fighter: 125 hp, atk 75, mag 0
+  - [ ] add IDs to all actors
+- [ ] Add more actors
+  - [ ] Both parties should have four team members each
+    - [ ] Team A should have two fighters, a knight and a healer
+    - [ ] Team B should have a fighter, two knights and a healer
+- [ ] Implement actions
+  - [ ] Guard action should halve damage and apply to Knight instead
+  - [ ] Heal should add to current hp, never exceeding max
+  - [ ] Attack should deal atk value as dmg to target
+  - [ ] Knight should also have the 'Attack' action
+- [ ] Implement AP and PP
+  - [ ] All actors should have 1 ap and 1 pp
+  - [ ] Guard costs 1 pp
+  - [ ] Heal costs 1 pp
+  - [ ] Attack costs 1 ap
+  - [ ] Actions cannot be executed when the associated resource is lacking
+- [ ] Test flow with implemented stats
+  - [ ] Battle should start with Team B's fighter attacking Team A's healer
+- [ ] Add spd stat to actors
+  - [ ] Team A: Knight: 2 spd, Fighter: 5 spd, Healer: 3 spd
+  - [ ] Team B: Knight: 1 spd, Fighter: 8 spd, Healer: 1 spd
+- [ ] Implement a round queue
+  - [ ] Add all actors to the queue
+  - [ ] Actors are sorted according to their speed
+- [ ] Add a loop to the broker that handles rounds
+  - [ ] Limit the round count to 3 for now
+  - [ ] Ensure every actor takes a turn each round
+- [ ] Test flow with implemented speed stat
+- [ ] Define more complex behaviours for the actors
+  - [ ] Knights should only protect
