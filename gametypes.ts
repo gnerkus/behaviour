@@ -20,3 +20,19 @@ export interface BrokerInterface {
   processEventQueue(): void;
   processActions(): void;
 }
+
+export type Stats = {
+  currentHP: number
+  maxHP: number
+  currentAP: number
+  maxAP: number
+  currentPP: number
+  maxPP: number
+  attack: number
+  magic: number
+}
+
+export type ActorInfo = {
+  id: string
+  className: "Knight" | "Healer" | "Fighter"
+}

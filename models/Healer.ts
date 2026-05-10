@@ -1,16 +1,32 @@
 import type {
+  ActorInfo,
   BattleEvents,
   BrokerInterface,
   Effect,
   Handler,
-  Listener
+  Listener, Stats
 } from "../gametypes.ts";
 import {Actor} from "./Actor.ts";
 import {Heap} from "heap-js";
 
 class HealerActor extends Actor {
-  constructor(definition: string, broker: BrokerInterface, queue: Heap<Effect>) {
-    super(definition, broker, queue);
+  constructor(
+      definition: string,
+      broker: BrokerInterface,
+      queue: Heap<Effect>,
+      charInfo: ActorInfo
+  ) {
+    const healerStats = {
+      currentHP: 100,
+      maxHP: 100,
+      currentAP: 1,
+      maxAP: 1,
+      currentPP: 1,
+      maxPP: 1,
+      attack: 0,
+      magic: 100
+    }
+    super(definition, broker, queue, healerStats, charInfo);
     this.brokerRef.addSubscriber('EnemyAttack', this.onEnemyAttack);
   }
 

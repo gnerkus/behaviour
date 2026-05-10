@@ -19,14 +19,14 @@ const knightRules = `root {
             action [Guard]
         }
     }`;
-const knight = new KnightActor(knightRules, broker, actionPriorityQueue);
+const knight = new KnightActor(knightRules, broker, actionPriorityQueue, { id: "k01", className: "Knight"});
 const healerRules = `root {
         sequence {
             action [Heal]
         }
     }`;
-const healer = new HealerActor(healerRules, broker, actionPriorityQueue);
+const healer = new HealerActor(healerRules, broker, actionPriorityQueue, { id: "h01", className: "Healer"});
 
-const fighter = new FighterActor(healerRules, broker, actionPriorityQueue);
+const fighter = new FighterActor(healerRules, broker, actionPriorityQueue, { id: "f01", className: "Fighter"});
 
 fighter.enemyAttack();
