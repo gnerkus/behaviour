@@ -16,7 +16,7 @@
   - [ ] Attack should deal atk value as dmg to target
   - [ ] Knight should also have the 'Attack' action
 - [ ] Implement AP and PP
-  - [ ] All actors should have 1 ap and 1 pp
+  - [x] All actors should have 1 ap and 1 pp
   - [ ] Guard costs 1 pp
   - [ ] Heal costs 1 pp
   - [ ] Attack costs 1 ap

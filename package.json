@@ -14,6 +14,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@jsonquerylang/jsonquery": "^5.1.1",
     "heap-js": "^2.7.1",
     "mistreevous": "^4.3.1"
   },
