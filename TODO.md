@@ -6,6 +6,9 @@
   - [x] Healer: 100 hp, atk 0, mag 100
   - [x] Fighter: 125 hp, atk 75, mag 0
   - [x] add IDs to all actors
+- [ ] Figure out how to represent board state
+  - [ ] Move stats to board state object and give actors references instead
+  - 
 - [ ] Add more actors
   - [ ] Both parties should have four team members each
     - [ ] Team A should have two fighters, a knight and a healer

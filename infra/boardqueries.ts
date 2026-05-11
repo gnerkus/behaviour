@@ -22,3 +22,29 @@ const output = jsonquery(data, `
 `)
 
 console.log(output)
+
+/**
+ * BOARD STATE
+ *
+ * - How to pass board state to behaviour?
+ *
+ * - contains stats of all the actors, alongside actor ids
+ * -
+ *
+ * Example flow
+ * 1. Fighter goes first
+ * 2. Fighter inspects board
+ * 3. Fighter's behaviour chooses to attack healer based on board state
+ * 4. attack event is published
+ * 5. Knight receives event, inspects board state and chooses to guard healer
+ *
+ *
+ * Knight guard
+ * root {
+ *     sequence {
+ *         condition [IsSameTeam]
+ *         condition [TargetHPLessEqual, 50]
+ *         action [Guard]
+ *     }
+ * }
+ */

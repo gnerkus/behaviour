@@ -14,19 +14,9 @@ class KnightActor extends Actor {
       definition: string,
       broker: BrokerInterface,
       queue: Heap<Effect>,
-      charInfo: ActorInfo
+      id: string
   ) {
-    const knightStats = {
-      currentHP: 175,
-      maxHP: 175,
-      currentAP: 1,
-      maxAP: 1,
-      currentPP: 1,
-      maxPP: 1,
-      attack: 25,
-      magic: 0
-    }
-    super(definition, broker, queue, knightStats, charInfo);
+    super(definition, broker, queue, id);
     this.brokerRef.addSubscriber('EnemyAttack', this.onEnemyAttack);
   }
 

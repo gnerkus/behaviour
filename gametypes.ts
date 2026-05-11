@@ -36,3 +36,8 @@ export type ActorInfo = {
   id: string
   className: "Knight" | "Healer" | "Fighter"
 }
+
+export type BoardAgentInterface = {
+  setTargets(ids: string[]): void;
+  isTargetTeam(askerId: string): boolean;
+}
