@@ -6,12 +6,13 @@ import KnightActor from "./models/Knight.ts";
 import HealerActor from "./models/Healer.ts";
 import FighterActor from "./models/Fighter.ts";
 import Broker from "./gameobjects/Broker.ts";
+import BoardAgent from "./gameobjects/boardAgent.ts";
 
 const customPriorityComparator = (a: Effect, b: Effect) => a.priority - b.priority;
 const actionPriorityQueue = new Heap(customPriorityComparator);
 
-
 const broker = new Broker(actionPriorityQueue);
+const agent = new BoardAgent();
 
 const knightRules = `
 {
@@ -20,6 +21,10 @@ const knightRules = `
     "type": "sequence",
     "children": [
       {
+        "type": "condition",
+        "call": "IsTargetTeam"
+      },
+      {
         "type": "action",
         "call": "Guard"
       }
@@ -27,13 +32,17 @@ const knightRules = `
   }
 }
 `
-const knight = new KnightActor(knightRules, broker, actionPriorityQueue, "knt01a");
+const knight = new KnightActor(knightRules, broker, actionPriorityQueue, agent, "knt01a");
 const healerRules = `
 {
   "type": "root",
   "child": {
     "type": "sequence",
     "children": [
+      {
+        "type": "condition",
+        "call": "IsTargetTeam"
+      },
       {
         "type": "action",
         "call": "Heal"
@@ -42,31 +51,8 @@ const healerRules = `
   }
 }
 `
-const healer = new HealerActor(healerRules, broker, actionPriorityQueue,"hel01a");
+const healer = new HealerActor(healerRules, broker, actionPriorityQueue, agent,"hel01a");
 
-const fighter = new FighterActor(healerRules, broker, actionPriorityQueue, "fgt03b");
+const fighter = new FighterActor(healerRules, broker, actionPriorityQueue, agent,"fgt03b");
 
 fighter.enemyAttack();
-
-/**
- * {
- *     "type": "root",
- *     "child": {
- *         "type": "sequence",
- *         "children": [
- *             {
- *                 "type": "action",
- *                 "call": "Walk"
- *             },
- *             {
- *                 "type": "action",
- *                 "call": "Fall"
- *             },
- *             {
- *                 "type": "action",
- *                 "call": "Laugh"
- *             }
- *         ]
- *     }
- * }
- */

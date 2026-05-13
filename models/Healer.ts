@@ -1,5 +1,5 @@
 import type {
-  BattleEvents,
+  BattleEvents, BoardAgentInterface,
   BrokerInterface,
   Effect,
   Handler,
@@ -13,9 +13,10 @@ class HealerActor extends Actor {
       definition: string,
       broker: BrokerInterface,
       queue: Heap<Effect>,
+      agent: BoardAgentInterface,
       id: string
   ) {
-    super(definition, broker, queue, id);
+    super(definition, broker, queue, agent, id);
     this.brokerRef.addSubscriber('EnemyAttack', this.onEnemyAttack);
   }
 
@@ -40,6 +41,10 @@ class HealerActor extends Actor {
       priority: 2
     });
     this.currentEventData = null;
+  }
+
+  IsTargetTeam() {
+    return this.boardAgentRef.isTargetTeam(this.ID);
   }
 }
 

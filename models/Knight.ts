@@ -1,7 +1,7 @@
 import {Actor} from "./Actor.ts";
 import type {
   ActorInfo,
-  BattleEvents,
+  BattleEvents, BoardAgentInterface,
   BrokerInterface,
   Effect,
   Handler,
@@ -14,9 +14,10 @@ class KnightActor extends Actor {
       definition: string,
       broker: BrokerInterface,
       queue: Heap<Effect>,
+      agent: BoardAgentInterface,
       id: string
   ) {
-    super(definition, broker, queue, id);
+    super(definition, broker, queue, agent, id);
     this.brokerRef.addSubscriber('EnemyAttack', this.onEnemyAttack);
   }
 
@@ -41,6 +42,10 @@ class KnightActor extends Actor {
       priority: 1
     });
     this.currentEventData = null;
+  }
+
+  IsTargetTeam() {
+    return this.boardAgentRef.isTargetTeam(this.ID);
   }
 }
 

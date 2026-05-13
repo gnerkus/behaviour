@@ -24,9 +24,4 @@ class BoardAgent implements BoardAgentInterface {
   }
 }
 
-export default BoardAgent
-
-/**
- * The board agent queries the board
- */
-
+export default BoardAgent;

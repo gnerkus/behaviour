@@ -1,5 +1,5 @@
 import type {
-  BattleEvents, BattleEventTypes,
+  BattleEvents, BattleEventTypes, BoardAgentInterface,
   BrokerInterface,
   Effect,
 } from "../gametypes.ts";
@@ -10,6 +10,7 @@ export abstract class Actor {
   protected currentEventData: BattleEvents[BattleEventTypes];
   protected tree: BehaviourTree;
   protected brokerRef: BrokerInterface;
+  protected boardAgentRef: BoardAgentInterface;
   protected actionQueue: Heap<Effect>;
 
   protected ID: string;
@@ -18,11 +19,13 @@ export abstract class Actor {
       definition: string,
       broker: BrokerInterface,
       queue: Heap<Effect>,
+      boardAgent: BoardAgentInterface,
       id: string
   ) {
     this.tree = new BehaviourTree(definition, this);
     this.brokerRef = broker;
     this.actionQueue = queue;
+    this.boardAgentRef = boardAgent;
 
     this.ID = id;
   }
@@ -38,7 +41,5 @@ export abstract class Actor {
    * @constructor
    * @protected
    */
-  protected IsTargetTeam() {
-
-  }
+  abstract IsTargetTeam(): boolean;
 }
